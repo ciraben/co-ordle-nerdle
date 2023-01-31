@@ -52,6 +52,8 @@ async def on_message(message):
                 response += guess[i]
             else:
                 response += guess[i].lower()
+        # remove instances of **** from response
+        response = ''.join(response.split('****'))
         # await message.channel.send('You did it! You guessed a 6-letter word!!')
         await message.channel.send(response)
 
