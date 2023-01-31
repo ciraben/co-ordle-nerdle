@@ -34,7 +34,7 @@ async def on_message(message):
     content = message.content
 
     if content in ('$hello','!hello'):
-        await message.channel.send(f'Hello @{message.author}!')
+        await message.channel.send(f'Hello {message.author.mention}!')
     elif content in ('$help','$info', '$rules', '!help', '!info', '!rules'):
         await message.channel.send('I am but a humble botto, pls don\'t expect too much of me.')
     elif content.startswith('!') and len(content) != 7:
