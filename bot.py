@@ -3,6 +3,8 @@ import discord as ds
 import os
 import sys
 
+# 6-letter word db
+# https://www.wordgamedictionary.com/word-lists/6-letter-words/6-letter-words.json
 
 with open('token') as f:
     TOKEN = f.read().strip()
@@ -37,8 +39,10 @@ async def on_message(message):
         await message.channel.send(f'Hello {message.author.mention}!')
     elif content in ('$help','$info', '$rules', '!help', '!info', '!rules'):
         await message.channel.send('I am but a humble botto, pls don\'t expect too much of me.')
+    # elif add other bot commands up here ^
     elif content.startswith('!') and len(content) != 7:
-        await message.channel.send('Try guessing a 6-letter word instead.')
+        # ignore other non-guesses
+        return
     elif content.startswith('!') and len(content) == 7:
         guess = content[1:].upper()
         if guess == WORD:
@@ -52,9 +56,9 @@ async def on_message(message):
                 response += guess[i]
             else:
                 response += guess[i].lower()
-        # remove instances of **** from response
+        # remove instances of **** from response so bolding works
         response = ''.join(response.split('****'))
-        # await message.channel.send('You did it! You guessed a 6-letter word!!')
+
         await message.channel.send(response)
 
 
