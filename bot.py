@@ -44,22 +44,41 @@ async def on_message(message):
         # ignore other non-guesses
         return
     elif content.startswith('!') and len(content) == 7:
-        guess = content[1:].upper()
-        if guess == WORD:
-            await message.channel.send(f'**{WORD}** – you got it, yay!✨')
-            return
-        response = ''
-        for i in range(6):
-            if guess[i] == WORD[i]:
-                response += '**' + guess[i] + '**'
-            elif guess[i] in WORD:
-                response += guess[i]
-            else:
-                response += guess[i].lower()
-        # remove instances of **** from response so bolding works
-        response = ''.join(response.split('****'))
+        await message.channel.send(wordle_logic(message))
 
-        await message.channel.send(response)
+def wordle_logic(message):
+    guess = message.content[1:].upper()
+    if guess == WORD:
+        # await message.channel.send(f'**{WORD}** – you got it, yay!✨')
+        return '**' + WORD + '** – you got it, yay!✨'
+    response = ''
+    guess_status = [0]*6
+    word_left = WORD
+    # check for greens
+    for i in range(6):
+        if guess[i] == WORD[i]:
+            # response += '**' + guess[i] + '**'
+            guess_status[i] = 2
+            word_left = word_left[:i] + '0' + word_left[i+1:]
+    # check for yellows
+    for i in range(6):
+        if guess[i] in word_left and guess_status[i] == 0:
+            # response += guess[i]
+            guess_status[i] = 1
+            j = word_left.find(guess[i])
+            word_left = word_left[:j] + '0' + word_left[j+1:]
+    # construct response
+    for i in range(6):
+        if guess_status[i] == 0:
+            response += guess[i].lower()
+        elif guess_status[i] == 1:
+            response += guess[i]
+        elif guess_status[i] == 2:
+            response += '**' + guess[i] + '**'
+    # remove instances of **** from response so bolding works
+    response = ''.join(response.split('****'))
+    return response
+
 
 
 client.run(TOKEN)
