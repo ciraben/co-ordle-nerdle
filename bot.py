@@ -9,8 +9,9 @@ import sys
 with open('token') as f:
     TOKEN = f.read().strip()
 CHANNELS = ('bot-tester', 'wordlelikes')
-WORD = 'QWERTY'
-
+WORD = 'qwerty'
+with open('wordlist') as f:
+    WORD_LIST = f.read().split(' ')
 #sys.exit()
 
 # add any "intents" (permissions we want) here
@@ -44,14 +45,17 @@ async def on_message(message):
         # ignore other non-guesses
         return
     elif content.startswith('!') and len(content) == 7:
-        await message.channel.send(wordle_logic(message))
+        guess = wordle_logic(message)
+        print(f'{message.author} guessed {guess}')
+        await message.channel.send(guess)
 
 def wordle_logic(message):
-    guess = message.content[1:].upper()
+    guess = message.content[1:].lower()
     if guess == WORD:
         # await message.channel.send(f'**{WORD}** – you got it, yay!✨')
         return '**' + WORD + '** – you got it, yay!✨'
-    response = ''
+    elif guess not in WORD_LIST:
+        return 'Not a valid word nope!'
     guess_status = [0]*6
     word_left = WORD
     # check for greens
@@ -68,13 +72,14 @@ def wordle_logic(message):
             j = word_left.find(guess[i])
             word_left = word_left[:j] + '0' + word_left[j+1:]
     # construct response
+    response = ''
     for i in range(6):
         if guess_status[i] == 0:
             response += guess[i].lower()
         elif guess_status[i] == 1:
-            response += guess[i]
+            response += guess[i].upper()
         elif guess_status[i] == 2:
-            response += '**' + guess[i] + '**'
+            response += '**' + guess[i].upper() + '**'
     # remove instances of **** from response so bolding works
     response = ''.join(response.split('****'))
     return response
