@@ -53,7 +53,7 @@ def wordle_logic(message):
     guess = message.content[1:].lower()
     if guess == WORD:
         # await message.channel.send(f'**{WORD}** – you got it, yay!✨')
-        return '**' + WORD + '** – you got it, yay!✨'
+        return '**' + WORD.upper() + '** – you got it, yay!✨'
     elif guess not in WORD_LIST:
         return 'Not a valid word nope!'
     guess_status = [0]*6
