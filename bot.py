@@ -3,6 +3,7 @@ import discord as ds
 import os
 import sys
 import random
+import datetime
 
 with open('token') as f:
     TOKEN = f.read().strip()
@@ -13,12 +14,17 @@ with open('wordlist') as f:
 # WORD = 'qwerty'
 def new_word():
     global WORD
+    global START_TIME
     WORD = random.choice(WORD_LIST)
+    START_TIME = datetime.datetime.now().strftime('%B %d, %Y %H:%M %p')
     print(f'new word is {WORD}')
+    print(f'start time is {START_TIME}')
 
 # new_word()
 # print(WORD)
 # sys.exit()
+
+GUESS_LIST = ''
 
 # add any "intents" (discord permissions we want) here
 intents = ds.Intents.default()
@@ -68,6 +74,11 @@ async def on_message(message):
         guess = wordle_logic(message)
         print(f'{message.author} guessed {guess}')
         await message.channel.send(guess)
+
+# def formatted_update():
+# 
+# 
+#     return msg
 
 def wordle_logic(message):
     guess = message.content[1:].lower()
