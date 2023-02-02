@@ -1,9 +1,10 @@
 # To-do
 
-* [ ] add duplicate letter handling
-* [ ] connect a word database
-* [ ] add random word selector
+* [x] add duplicate letter handling
+* [x] connect a word database
+* [x] add random word selector
 * [ ] add round completion
 * [ ] print out guess-list
-* [ ] host bot not on my laptop lol
 * [ ] add new round scheduling
+* [ ] add better UI
+* [ ] host bot not on my laptop lol
