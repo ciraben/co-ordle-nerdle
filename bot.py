@@ -4,19 +4,23 @@ import os
 import sys
 import random
 
-# 6-letter word db taken from:
-# https://www.wordgamedictionary.com/word-lists/6-letter-words/6-letter-words.json
-
 with open('token') as f:
     TOKEN = f.read().strip()
 CHANNELS = ('bot-tester', 'wordlelikes')
 with open('wordlist') as f:
     WORD_LIST = f.read().split(' ')
-#sys.exit()
 
-WORD = random.choice(WORD_LIST)
+# WORD = 'qwerty'
+def new_word():
+    global WORD
+    WORD = random.choice(WORD_LIST)
+    print(f'new word is {WORD}')
 
-# add any "intents" (permissions we want) here
+# new_word()
+# print(WORD)
+# sys.exit()
+
+# add any "intents" (discord permissions we want) here
 intents = ds.Intents.default()
 intents.message_content = True
 
@@ -28,36 +32,45 @@ async def on_ready():
     print(f'We have logged in as {client.user}')
     print(f'Accessing servers {[g.name for g in client.guilds]}')
     print(f'Reading messages in #{CHANNELS}')
+    new_word()
 
 @client.event
 async def on_message(message):
+    # ignore these messages
     if message.author == client.user:
         return
     if message.channel.name not in CHANNELS:
         return
     
-    content = message.content
-
-    if content in ('$hello','!hello'):
+    # fun chatter
+    if message.content == '!hello':
         await message.channel.send(f'Hello {message.author.mention}!')
-    elif content in ('$help','$info', '$rules', '!help', '!info', '!rules'):
-        await message.channel.send('I am but a humble botto, pls don\'t expect too much of me.')
-    # elif add other bot commands up here ^
-    elif content.startswith('!') and len(content) != 7:
-        # ignore other non-guesses
         return
-    elif content.startswith('!') and len(content) == 7:
+    if message.content in ('$help','$info', '$rules', '!help', '!info', '!rules'):
+        await message.channel.send('I am but a humble botto, pls don\'t expect too much of me.')
+        return
+    
+    # ignore these too
+    if not message.content.startswith('!') or len(message.content) != 7:
+        return
+    
+    # game content starts here
+    if message.content.startswith('!') and message.content[1:] not in WORD_LIST:
+        await message.channel.send('Not a valid word nope!')
+        return
+    if message.content[1:].lower() == WORD:
+        await message.channel.send(f'**{WORD.upper()}** – you got it, yay!✨')
+        # reset game here
+        new_word()
+        await message.channel.send('okay, new game!')
+        return
+    if message.content.startswith('!'):
         guess = wordle_logic(message)
         print(f'{message.author} guessed {guess}')
         await message.channel.send(guess)
 
 def wordle_logic(message):
     guess = message.content[1:].lower()
-    if guess == WORD:
-        # await message.channel.send(f'**{WORD}** – you got it, yay!✨')
-        return '**' + WORD.upper() + '** – you got it, yay!✨'
-    elif guess not in WORD_LIST:
-        return 'Not a valid word nope!'
     guess_status = [0]*6
     word_left = WORD
     # check for greens
