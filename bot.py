@@ -2,17 +2,19 @@
 import discord as ds
 import os
 import sys
+import random
 
-# 6-letter word db
+# 6-letter word db taken from:
 # https://www.wordgamedictionary.com/word-lists/6-letter-words/6-letter-words.json
 
 with open('token') as f:
     TOKEN = f.read().strip()
 CHANNELS = ('bot-tester', 'wordlelikes')
-WORD = 'qwerty'
 with open('wordlist') as f:
     WORD_LIST = f.read().split(' ')
 #sys.exit()
+
+WORD = random.choice(WORD_LIST)
 
 # add any "intents" (permissions we want) here
 intents = ds.Intents.default()
