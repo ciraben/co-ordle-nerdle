@@ -19,6 +19,16 @@ def new_word():
     START_TIME = datetime.datetime.now().strftime('%B %d, %Y %H:%M %p')
     print(f'new word is {WORD}')
     print(f'start time is {START_TIME}')
+    reset_guesslist()
+
+def reset_guesslist():
+    global GUESS_LIST
+    GUESS_LIST = ''
+def add_to_guesslist(guess, author):
+    global GUESS_LIST
+    if GUESS_LIST != '':
+        GUESS_LIST += '\n'
+    GUESS_LIST += guess + ' – ' + author
 
 # new_word()
 # print(WORD)
@@ -72,8 +82,9 @@ async def on_message(message):
         return
     if message.content.startswith('!'):
         guess = wordle_logic(message)
+        add_to_guesslist(guess, message.author.name)
         print(f'{message.author} guessed {guess}')
-        await message.channel.send(guess)
+        await message.channel.send(GUESS_LIST)
 
 # def formatted_update():
 # 
